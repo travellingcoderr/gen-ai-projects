@@ -1,8 +1,10 @@
 from app.clients.jsonplaceholder_client import JsonPlaceholderClient
 from app.clients.wikipedia_client import WikipediaClient
 from app.orchestration.jsonplaceholder_orchestrator import JsonPlaceholderOrchestrator
+from app.orchestration.langgraph_orchestrator import LangGraphOrchestrator
 from app.orchestration.llm_orchestrator import LLMOrchestrator
 from app.orchestration.search_orchestrator import SearchOrchestrator
+from app.services.langgraph_support_service import LangGraphSupportService
 from app.services.llm_service import LLMService
 from app.services.search_service import SearchService
 
@@ -26,3 +28,7 @@ def get_jsonplaceholder_orchestrator() -> JsonPlaceholderOrchestrator:
 
 def get_llm_orchestrator() -> LLMOrchestrator:
     return LLMOrchestrator(llm_service=LLMService())
+
+
+def get_langgraph_orchestrator() -> LangGraphOrchestrator:
+    return LangGraphOrchestrator(service=LangGraphSupportService())

@@ -4,7 +4,7 @@ Python FastAPI backend for `customer-support-agent`.
 
 ## Structure
 
-- `app/api/routes`: route handlers (`health`, `search`, `jsonplaceholder`, `llm`)
+- `app/api/routes`: route handlers (`health`, `search`, `jsonplaceholder`, `llm`, `langgraph`)
 - `app/api/schemas`: API schemas
 - `app/clients`: external API clients
 - `app/services`: business services
@@ -26,3 +26,4 @@ uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 - `LLM_MODEL`: optional override (auto-default per provider)
 - `OPENAI_API_KEY` and `GEMINI_API_KEY` available by default in settings
 - `GET /api/llm/config` returns the active provider/model configuration
+- `POST /api/langgraph/support` runs a LangGraph support pipeline (`categorize -> analyze -> respond`)

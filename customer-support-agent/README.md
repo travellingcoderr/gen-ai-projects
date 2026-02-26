@@ -13,6 +13,7 @@ Key backend endpoints:
 - `GET /api/health`
 - `GET /api/jsonplaceholder/posts`
 - `GET /api/llm/config`
+- `POST /api/langgraph/support`
 
 ## Environment setup
 
