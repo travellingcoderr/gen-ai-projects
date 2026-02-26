@@ -5,5 +5,5 @@ class SearchService:
     def __init__(self, wikipedia_client: WikipediaClient) -> None:
         self.wikipedia_client = wikipedia_client
 
-    def search(self, query: str) -> list[dict[str, str]]:
-        return self.wikipedia_client.search(query)
+    async def search(self, query: str) -> list[dict[str, str]]:
+        return await self.wikipedia_client.search(query)

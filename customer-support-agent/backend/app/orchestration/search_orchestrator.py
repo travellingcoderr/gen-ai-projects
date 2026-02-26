@@ -6,8 +6,8 @@ class SearchOrchestrator:
     def __init__(self, search_service: SearchService) -> None:
         self.search_service = search_service
 
-    def search(self, query: str) -> SearchResponse:
-        results = self.search_service.search(query)
+    async def search(self, query: str) -> SearchResponse:
+        results = await self.search_service.search(query)
         return SearchResponse(
             query=query,
             results=[SearchResult(**item) for item in results],

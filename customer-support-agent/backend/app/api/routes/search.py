@@ -8,8 +8,8 @@ router = APIRouter()
 
 
 @router.get("", response_model=SearchResponse)
-def search(
+async def search(
     q: str = Query(..., min_length=2),
     orchestrator: SearchOrchestrator = Depends(get_search_orchestrator),
 ) -> SearchResponse:
-    return orchestrator.search(q)
+    return await orchestrator.search(q)

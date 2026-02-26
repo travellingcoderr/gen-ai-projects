@@ -6,7 +6,7 @@ import httpx
 class WikipediaClient:
     base_url = "https://en.wikipedia.org/w/api.php"
 
-    def search(self, query: str) -> list[dict[str, str]]:
+    async def search(self, query: str) -> list[dict[str, str]]:
         params = {
             "action": "query",
             "format": "json",
@@ -14,8 +14,9 @@ class WikipediaClient:
             "srsearch": query,
             "srlimit": 5,
         }
-        with httpx.Client(timeout=10.0) as client:
-            response = client.get(self.base_url, params=params)
+        headers = {"User-Agent": "customer-support-agent/1.0 (https://github.com/travellingcoderr/gen-ai-projects/customer-support-agent)"}
+        async with httpx.AsyncClient(timeout=10.0, headers=headers) as client:
+            response = await client.get(self.base_url, params=params)
             response.raise_for_status()
             payload: dict[str, Any] = response.json()
 
