@@ -134,6 +134,31 @@
                               "response": []
                             }
                           ]
+                        },
+                        {
+                          "name": "search",
+                          "item": [
+                            {
+                              "name": "GET /api/test/wiki_search",
+                              "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                  "raw": "{{customer_support_agent_base_url}}/api/test/wiki_search",
+                                  "host": [
+                                    "{{customer_support_agent_base_url}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "test",
+                                    "wiki_search"
+                                  ]
+                                },
+                                "description": "Source: customer-support-agent/backend/app/api/routes/search.py::search"
+                              },
+                              "response": []
+                            }
+                          ]
                         }
                       ]
                     }
@@ -230,6 +255,31 @@
                                   ]
                                 },
                                 "description": "Source: mcp-travel-agent/backend/app/api/routes/llm.py::llm_config"
+                              },
+                              "response": []
+                            }
+                          ]
+                        },
+                        {
+                          "name": "search",
+                          "item": [
+                            {
+                              "name": "GET /api/test/wiki_search",
+                              "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                  "raw": "{{mcp_travel_agent_base_url}}/api/test/wiki_search",
+                                  "host": [
+                                    "{{mcp_travel_agent_base_url}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "test",
+                                    "wiki_search"
+                                  ]
+                                },
+                                "description": "Source: mcp-travel-agent/backend/app/api/routes/search.py::search"
                               },
                               "response": []
                             }

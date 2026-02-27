@@ -114,7 +114,7 @@ def _parse_route_file(
     endpoints: list[Endpoint] = []
 
     for node in tree.body:
-        if not isinstance(node, ast.FunctionDef):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             continue
 
         for decorator in node.decorator_list:
