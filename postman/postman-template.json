@@ -1,0 +1,106 @@
+{
+  "generated_at": "2026-02-27T01:10:13.852008+00:00",
+  "root": "gen-ai-projects",
+  "projects": [
+    {
+      "project": "customer-support-agent",
+      "base_url_variable": "customer_support_agent_base_url",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "prefix": "/api",
+          "route_module": "health",
+          "route_file": "customer-support-agent/backend/app/api/routes/health.py",
+          "function": "health",
+          "tags": [
+            "health"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/test/jsonplaceholder/posts",
+          "prefix": "/api/test/jsonplaceholder",
+          "route_module": "jsonplaceholder",
+          "route_file": "customer-support-agent/backend/app/api/routes/jsonplaceholder.py",
+          "function": "list_posts",
+          "tags": [
+            "jsonplaceholder"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/langgraph/support",
+          "prefix": "/api/langgraph",
+          "route_module": "langgraph",
+          "route_file": "customer-support-agent/backend/app/api/routes/langgraph.py",
+          "function": "process_support_message",
+          "tags": [
+            "langgraph"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/llm/config",
+          "prefix": "/api/llm",
+          "route_module": "llm",
+          "route_file": "customer-support-agent/backend/app/api/routes/llm.py",
+          "function": "llm_config",
+          "tags": [
+            "llm"
+          ]
+        }
+      ]
+    },
+    {
+      "project": "mcp-travel-agent",
+      "base_url_variable": "mcp_travel_agent_base_url",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/api/health",
+          "prefix": "/api",
+          "route_module": "health",
+          "route_file": "mcp-travel-agent/backend/app/api/routes/health.py",
+          "function": "health",
+          "tags": [
+            "health"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/test/jsonplaceholder/posts",
+          "prefix": "/api/test/jsonplaceholder",
+          "route_module": "jsonplaceholder",
+          "route_file": "mcp-travel-agent/backend/app/api/routes/jsonplaceholder.py",
+          "function": "list_posts",
+          "tags": [
+            "jsonplaceholder"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/llm/config",
+          "prefix": "/api/llm",
+          "route_module": "llm",
+          "route_file": "mcp-travel-agent/backend/app/api/routes/llm.py",
+          "function": "llm_config",
+          "tags": [
+            "llm"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/api/travel/plan",
+          "prefix": "/api/travel",
+          "route_module": "travel",
+          "route_file": "mcp-travel-agent/backend/app/api/routes/travel.py",
+          "function": "plan_trip",
+          "tags": [
+            "travel"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,300 @@
+{
+  "info": {
+    "name": "gen-ai-projects - Auto Generated APIs",
+    "_postman_id": "8f9b8929-c9c9-5afa-87c4-da2319a9dc92",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Auto-generated from FastAPI route files. Do not edit manually."
+  },
+  "item": [
+    {
+      "name": "customer-support-agent",
+      "item": [
+        {
+          "name": "backend",
+          "item": [
+            {
+              "name": "app",
+              "item": [
+                {
+                  "name": "api",
+                  "item": [
+                    {
+                      "name": "routes",
+                      "item": [
+                        {
+                          "name": "health",
+                          "item": [
+                            {
+                              "name": "GET /api/health",
+                              "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                  "raw": "{{customer_support_agent_base_url}}/api/health",
+                                  "host": [
+                                    "{{customer_support_agent_base_url}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "health"
+                                  ]
+                                },
+                                "description": "Source: customer-support-agent/backend/app/api/routes/health.py::health"
+                              },
+                              "response": []
+                            }
+                          ]
+                        },
+                        {
+                          "name": "jsonplaceholder",
+                          "item": [
+                            {
+                              "name": "GET /api/test/jsonplaceholder/posts",
+                              "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                  "raw": "{{customer_support_agent_base_url}}/api/test/jsonplaceholder/posts",
+                                  "host": [
+                                    "{{customer_support_agent_base_url}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "test",
+                                    "jsonplaceholder",
+                                    "posts"
+                                  ]
+                                },
+                                "description": "Source: customer-support-agent/backend/app/api/routes/jsonplaceholder.py::list_posts"
+                              },
+                              "response": []
+                            }
+                          ]
+                        },
+                        {
+                          "name": "langgraph",
+                          "item": [
+                            {
+                              "name": "POST /api/langgraph/support",
+                              "request": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{customer_support_agent_base_url}}/api/langgraph/support",
+                                  "host": [
+                                    "{{customer_support_agent_base_url}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "langgraph",
+                                    "support"
+                                  ]
+                                },
+                                "description": "Source: customer-support-agent/backend/app/api/routes/langgraph.py::process_support_message",
+                                "body": {
+                                  "mode": "raw",
+                                  "raw": "{\n  \"query\": \"replace me\"\n}",
+                                  "options": {
+                                    "raw": {
+                                      "language": "json"
+                                    }
+                                  }
+                                }
+                              },
+                              "response": []
+                            }
+                          ]
+                        },
+                        {
+                          "name": "llm",
+                          "item": [
+                            {
+                              "name": "GET /api/llm/config",
+                              "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                  "raw": "{{customer_support_agent_base_url}}/api/llm/config",
+                                  "host": [
+                                    "{{customer_support_agent_base_url}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "llm",
+                                    "config"
+                                  ]
+                                },
+                                "description": "Source: customer-support-agent/backend/app/api/routes/llm.py::llm_config"
+                              },
+                              "response": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "mcp-travel-agent",
+      "item": [
+        {
+          "name": "backend",
+          "item": [
+            {
+              "name": "app",
+              "item": [
+                {
+                  "name": "api",
+                  "item": [
+                    {
+                      "name": "routes",
+                      "item": [
+                        {
+                          "name": "health",
+                          "item": [
+                            {
+                              "name": "GET /api/health",
+                              "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                  "raw": "{{mcp_travel_agent_base_url}}/api/health",
+                                  "host": [
+                                    "{{mcp_travel_agent_base_url}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "health"
+                                  ]
+                                },
+                                "description": "Source: mcp-travel-agent/backend/app/api/routes/health.py::health"
+                              },
+                              "response": []
+                            }
+                          ]
+                        },
+                        {
+                          "name": "jsonplaceholder",
+                          "item": [
+                            {
+                              "name": "GET /api/test/jsonplaceholder/posts",
+                              "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                  "raw": "{{mcp_travel_agent_base_url}}/api/test/jsonplaceholder/posts",
+                                  "host": [
+                                    "{{mcp_travel_agent_base_url}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "test",
+                                    "jsonplaceholder",
+                                    "posts"
+                                  ]
+                                },
+                                "description": "Source: mcp-travel-agent/backend/app/api/routes/jsonplaceholder.py::list_posts"
+                              },
+                              "response": []
+                            }
+                          ]
+                        },
+                        {
+                          "name": "llm",
+                          "item": [
+                            {
+                              "name": "GET /api/llm/config",
+                              "request": {
+                                "method": "GET",
+                                "header": [],
+                                "url": {
+                                  "raw": "{{mcp_travel_agent_base_url}}/api/llm/config",
+                                  "host": [
+                                    "{{mcp_travel_agent_base_url}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "llm",
+                                    "config"
+                                  ]
+                                },
+                                "description": "Source: mcp-travel-agent/backend/app/api/routes/llm.py::llm_config"
+                              },
+                              "response": []
+                            }
+                          ]
+                        },
+                        {
+                          "name": "travel",
+                          "item": [
+                            {
+                              "name": "POST /api/travel/plan",
+                              "request": {
+                                "method": "POST",
+                                "header": [
+                                  {
+                                    "key": "Content-Type",
+                                    "value": "application/json"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{mcp_travel_agent_base_url}}/api/travel/plan",
+                                  "host": [
+                                    "{{mcp_travel_agent_base_url}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "travel",
+                                    "plan"
+                                  ]
+                                },
+                                "description": "Source: mcp-travel-agent/backend/app/api/routes/travel.py::plan_trip",
+                                "body": {
+                                  "mode": "raw",
+                                  "raw": "{\n  \"query\": \"replace me\"\n}",
+                                  "options": {
+                                    "raw": {
+                                      "language": "json"
+                                    }
+                                  }
+                                }
+                              },
+                              "response": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "customer_support_agent_base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "mcp_travel_agent_base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ]
+}

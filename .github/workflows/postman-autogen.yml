@@ -1,0 +1,42 @@
+name: Postman Auto-Generate
+
+on:
+  push:
+    paths:
+      - "**/backend/app/main.py"
+      - "**/backend/app/api/routes/**/*.py"
+      - "tools/postman/**"
+  pull_request:
+    paths:
+      - "**/backend/app/main.py"
+      - "**/backend/app/api/routes/**/*.py"
+      - "tools/postman/**"
+  workflow_dispatch:
+
+jobs:
+  generate-postman:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate template and collection
+        run: |
+          python tools/postman/generate_postman_collection.py
+
+      - name: Verify up-to-date on PR
+        if: github.event_name == 'pull_request'
+        run: |
+          git diff --exit-code
+
+      - name: Auto-commit generated files on push
+        if: github.event_name == 'push'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(postman): auto-generate collection"
+          file_pattern: "postman/*.json"
