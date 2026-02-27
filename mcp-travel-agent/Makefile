@@ -1,4 +1,4 @@
-.PHONY: env docker-up docker-down logs backend-test backend-lint
+.PHONY: env docker-up docker-down logs backend-test backend-lint fe-docker-up fe-docker-down be-docker-up be-docker-down
 
 env:
 	cp -n .env.example .env || true
@@ -19,3 +19,15 @@ backend-test:
 
 backend-lint:
 	cd backend && uv sync --extra dev && uv run ruff check . && uv run mypy app
+
+fe-docker-up: env
+	docker compose up --build frontend
+
+fe-docker-down:
+	docker compose down frontend
+
+be-docker-up: env
+	docker compose up --build backend
+
+be-docker-down:
+	docker compose down backend
