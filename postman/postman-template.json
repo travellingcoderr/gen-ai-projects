@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-27T13:19:08.596477+00:00",
+  "generated_at": "2026-02-27T13:37:32.379391+00:00",
   "root": "gen-ai-projects",
   "projects": [
     {
@@ -52,8 +52,8 @@
         },
         {
           "method": "GET",
-          "path": "/api/test/wiki_search",
-          "prefix": "/api/test/wiki_search",
+          "path": "/api/search",
+          "prefix": "/api/search",
           "route_module": "search",
           "route_file": "customer-support-agent/backend/app/api/routes/search.py",
           "function": "search",
@@ -102,8 +102,8 @@
         },
         {
           "method": "GET",
-          "path": "/api/test/wiki_search",
-          "prefix": "/api/test/wiki_search",
+          "path": "/api/search",
+          "prefix": "/api/search",
           "route_module": "search",
           "route_file": "mcp-travel-agent/backend/app/api/routes/search.py",
           "function": "search",

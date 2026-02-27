@@ -38,6 +38,7 @@ class Endpoint:
     path: str
     full_path: str
     tags: list[str]
+    query_params: list[dict[str, str]]
 
 
 def _normalize_path(prefix: str, path: str) -> str:
@@ -135,6 +136,34 @@ def _parse_route_file(
             if decorator.args and isinstance(decorator.args[0], ast.Constant) and isinstance(decorator.args[0].value, str):
                 path = decorator.args[0].value
 
+            query_params: list[dict[str, str]] = []
+            args = node.args.args
+            defaults = node.args.defaults
+            if defaults:
+                start = len(args) - len(defaults)
+                for idx, default in enumerate(defaults):
+                    arg = args[start + idx]
+                    if not isinstance(default, ast.Call):
+                        continue
+                    func = default.func
+                    is_query = (
+                        isinstance(func, ast.Name) and func.id == "Query"
+                    ) or (
+                        isinstance(func, ast.Attribute) and func.attr == "Query"
+                    )
+                    if not is_query:
+                        continue
+
+                    sample_value = "replace_me"
+                    if default.args and isinstance(default.args[0], ast.Constant):
+                        value = default.args[0].value
+                        if value is Ellipsis:
+                            sample_value = "test"
+                        elif value is not None:
+                            sample_value = str(value)
+
+                    query_params.append({"name": arg.arg, "sample": sample_value})
+
             endpoints.append(
                 Endpoint(
                     project=project,
@@ -146,6 +175,7 @@ def _parse_route_file(
                     path=path,
                     full_path=_normalize_path(prefix, path),
                     tags=tags,
+                    query_params=query_params,
                 )
             )
 
@@ -206,8 +236,25 @@ def _add_folder(items: list[dict[str, Any]], name: str) -> dict[str, Any]:
     return folder
 
 
+def _query_var_key(project: str, route_module: str, param_name: str) -> str:
+    cleaned = "".join(ch if ch.isalnum() else "_" for ch in f"{project}_{route_module}_{param_name}")
+    while "__" in cleaned:
+        cleaned = cleaned.replace("__", "_")
+    return cleaned.strip("_")
+
+
 def _request_item(base_url_var: str, ep: Endpoint, root: Path) -> dict[str, Any]:
+    query_items: list[dict[str, str]] = []
+    raw_query_parts: list[str] = []
+    for qp in ep.query_params:
+        key = _query_var_key(ep.project, ep.route_module, qp["name"])
+        query_items.append({"key": qp["name"], "value": f"{{{{{key}}}}}"})
+        raw_query_parts.append(f"{qp['name']}={{{{{key}}}}}")
+
     raw_url = f"{{{{{base_url_var}}}}}{ep.full_path}"
+    if raw_query_parts:
+        raw_url = f"{raw_url}?{'&'.join(raw_query_parts)}"
+
     path_parts = [p for p in ep.full_path.strip("/").split("/") if p]
     request: dict[str, Any] = {
         "method": ep.method,
@@ -219,6 +266,8 @@ def _request_item(base_url_var: str, ep: Endpoint, root: Path) -> dict[str, Any]
         },
         "description": f"Source: {ep.route_file.relative_to(root)}::{ep.function_name}",
     }
+    if query_items:
+        request["url"]["query"] = query_items
 
     if ep.method in {"POST", "PUT", "PATCH"}:
         request["body"] = {
@@ -253,6 +302,14 @@ def build_collection(root: Path, endpoints: list[Endpoint]) -> dict[str, Any]:
         {"key": _base_url_var(project), "value": "http://localhost:8000", "type": "string"}
         for project in project_names
     ]
+    seen_keys = {v["key"] for v in variables}
+    for ep in endpoints:
+        for qp in ep.query_params:
+            key = _query_var_key(ep.project, ep.route_module, qp["name"])
+            if key in seen_keys:
+                continue
+            variables.append({"key": key, "value": qp["sample"], "type": "string"})
+            seen_keys.add(key)
 
     return {
         "info": {

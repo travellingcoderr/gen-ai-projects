@@ -22,7 +22,7 @@ app.add_middleware(
 register_exception_handlers(app)
 
 app.include_router(health_router, prefix="/api", tags=["health"])
-app.include_router(search_router, prefix="/api/test/wiki_search", tags=["wiki_search"])
+app.include_router(search_router, prefix="/api/search", tags=["wiki_search"])
 app.include_router(jsonplaceholder_router, prefix="/api/test/jsonplaceholder", tags=["jsonplaceholder"])
 app.include_router(llm_router, prefix="/api/llm", tags=["llm"])
 app.include_router(langgraph_router, prefix="/api/langgraph", tags=["langgraph"])

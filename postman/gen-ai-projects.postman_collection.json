@@ -139,19 +139,24 @@
                           "name": "search",
                           "item": [
                             {
-                              "name": "GET /api/test/wiki_search",
+                              "name": "GET /api/search",
                               "request": {
                                 "method": "GET",
                                 "header": [],
                                 "url": {
-                                  "raw": "{{customer_support_agent_base_url}}/api/test/wiki_search",
+                                  "raw": "{{customer_support_agent_base_url}}/api/search?q={{customer_support_agent_search_q}}",
                                   "host": [
                                     "{{customer_support_agent_base_url}}"
                                   ],
                                   "path": [
                                     "api",
-                                    "test",
-                                    "wiki_search"
+                                    "search"
+                                  ],
+                                  "query": [
+                                    {
+                                      "key": "q",
+                                      "value": "{{customer_support_agent_search_q}}"
+                                    }
                                   ]
                                 },
                                 "description": "Source: customer-support-agent/backend/app/api/routes/search.py::search"
@@ -264,19 +269,24 @@
                           "name": "search",
                           "item": [
                             {
-                              "name": "GET /api/test/wiki_search",
+                              "name": "GET /api/search",
                               "request": {
                                 "method": "GET",
                                 "header": [],
                                 "url": {
-                                  "raw": "{{mcp_travel_agent_base_url}}/api/test/wiki_search",
+                                  "raw": "{{mcp_travel_agent_base_url}}/api/search?q={{mcp_travel_agent_search_q}}",
                                   "host": [
                                     "{{mcp_travel_agent_base_url}}"
                                   ],
                                   "path": [
                                     "api",
-                                    "test",
-                                    "wiki_search"
+                                    "search"
+                                  ],
+                                  "query": [
+                                    {
+                                      "key": "q",
+                                      "value": "{{mcp_travel_agent_search_q}}"
+                                    }
                                   ]
                                 },
                                 "description": "Source: mcp-travel-agent/backend/app/api/routes/search.py::search"
@@ -344,6 +354,16 @@
     {
       "key": "mcp_travel_agent_base_url",
       "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "customer_support_agent_search_q",
+      "value": "test",
+      "type": "string"
+    },
+    {
+      "key": "mcp_travel_agent_search_q",
+      "value": "test",
       "type": "string"
     }
   ]
