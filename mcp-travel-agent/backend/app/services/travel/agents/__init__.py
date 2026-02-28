@@ -1,8 +1,7 @@
 __all__ = [
-    "intake_agent",
-    "destination_agent",
-    "flights_agent",
-    "hotels_agent",
-    "itinerary_agent",
-    "summary_agent",
+    "parser_agent",
+    "property_agent",
+    "flight_agent",
+    "analysis_agent",
+    "orchestrator_agent",
 ]

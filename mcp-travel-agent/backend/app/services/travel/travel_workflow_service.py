@@ -1,28 +1,34 @@
 from app.api.schemas.travel import TravelPlanRequest
 from app.services.travel import state as state_types
-from app.services.travel.agents import (
-    destination_agent,
-    flights_agent,
-    hotels_agent,
-    intake_agent,
-    itinerary_agent,
-    summary_agent,
-)
-from app.services.travel.mcp_tools import MCPTravelTools
+from app.services.travel.agents.analysis_agent import AnalysisAgent
+from app.services.travel.agents.flight_agent import FlightAgent
+from app.services.travel.agents.orchestrator_agent import OrchestratorAgent
+from app.services.travel.agents.parser_agent import run as parse_request
+from app.services.travel.agents.property_agent import PropertyAgent
+from app.services.travel.tools.airbnb_tools import AirbnbTools
+from app.services.travel.tools.flight_tools import FlightTools
+from app.services.travel.tools.mcp_connector import MCPConnector
 
 
 class TravelWorkflowService:
-    """Coordinates a multi-agent travel planning workflow.
+    """Reference-style multi-agent travel workflow.
 
-    Plain English:
-    - Intake agent captures assumptions.
-    - Destination agent chooses likely places.
-    - Flights/hotels/itinerary agents call MCP-like tools.
-    - Summary agent creates the final user-facing plan summary.
+    Layman version:
+    - Parser agent figures out what the user wants.
+    - Property agent fetches possible stays.
+    - Flight agent fetches route options.
+    - Analysis agent ranks the stays.
+    - Orchestrator agent writes the final answer.
+
+    The agent names mirror the reference project so the codebase is easier to compare and reason about.
     """
 
     def __init__(self) -> None:
-        self._tools = MCPTravelTools()
+        connector = MCPConnector()
+        self._property_agent = PropertyAgent(AirbnbTools(connector))
+        self._flight_agent = FlightAgent(FlightTools(connector))
+        self._analysis_agent = AnalysisAgent()
+        self._orchestrator_agent = OrchestratorAgent()
         self._graph = self._build_graph()
 
     def _build_graph(self):
@@ -32,21 +38,18 @@ class TravelWorkflowService:
             return None
 
         graph = StateGraph(state_types.TravelState)
-        graph.add_node("intake_agent", self._intake_node)
-        graph.add_node("destination_agent", self._destination_node)
-        graph.add_node("flights_agent", self._flights_node)
-        graph.add_node("hotels_agent", self._hotels_node)
-        graph.add_node("itinerary_agent", self._itinerary_node)
-        graph.add_node("summary_agent", self._summary_node)
+        graph.add_node("parser_agent", self._parser_node)
+        graph.add_node("property_agent", self._property_node)
+        graph.add_node("flight_agent", self._flight_node)
+        graph.add_node("analysis_agent", self._analysis_node)
+        graph.add_node("orchestrator_agent", self._orchestrator_node)
 
-        graph.add_edge(START, "intake_agent")
-        graph.add_edge("intake_agent", "destination_agent")
-        graph.add_edge("destination_agent", "flights_agent")
-        graph.add_edge("flights_agent", "hotels_agent")
-        graph.add_edge("hotels_agent", "itinerary_agent")
-        graph.add_edge("itinerary_agent", "summary_agent")
-        graph.add_edge("summary_agent", END)
-
+        graph.add_edge(START, "parser_agent")
+        graph.add_edge("parser_agent", "property_agent")
+        graph.add_edge("property_agent", "flight_agent")
+        graph.add_edge("flight_agent", "analysis_agent")
+        graph.add_edge("analysis_agent", "orchestrator_agent")
+        graph.add_edge("orchestrator_agent", END)
         return graph.compile()
 
     def plan(self, request: TravelPlanRequest) -> dict:
@@ -57,54 +60,44 @@ class TravelWorkflowService:
             "budget_usd": request.budget_usd,
             "travelers": request.travelers,
             "interests": request.interests,
-            "destination_options": [],
             "selected_destination": "",
+            "parsed_requirements": {},
+            "property_candidates": [],
+            "top_properties": [],
             "flight_options": [],
-            "hotel_options": [],
-            "itinerary": [],
             "assumptions": [],
             "summary": "",
         }
 
-        if self._graph is not None:
-            output = self._graph.invoke(state)
-        else:
-            # Fallback mode when langgraph package is unavailable.
-            output = self._run_sequential(state)
-
+        output = self._graph.invoke(state) if self._graph is not None else self._run_sequential(state)
         return {
             "summary": output["summary"],
             "selected_destination": output["selected_destination"],
-            "destination_options": output["destination_options"],
+            "parsed_requirements": output["parsed_requirements"],
+            "top_properties": output["top_properties"],
             "flight_options": output["flight_options"],
-            "hotel_options": output["hotel_options"],
-            "itinerary": output["itinerary"],
             "assumptions": output["assumptions"],
         }
 
     def _run_sequential(self, state: state_types.TravelState) -> state_types.TravelState:
-        state = self._intake_node(state)
-        state = self._destination_node(state)
-        state = self._flights_node(state)
-        state = self._hotels_node(state)
-        state = self._itinerary_node(state)
-        state = self._summary_node(state)
+        state = self._parser_node(state)
+        state = self._property_node(state)
+        state = self._flight_node(state)
+        state = self._analysis_node(state)
+        state = self._orchestrator_node(state)
         return state
 
-    def _intake_node(self, state: state_types.TravelState) -> state_types.TravelState:
-        return intake_agent.run(state)
+    def _parser_node(self, state: state_types.TravelState) -> state_types.TravelState:
+        return parse_request(state)
 
-    def _destination_node(self, state: state_types.TravelState) -> state_types.TravelState:
-        return destination_agent.run(state)
+    def _property_node(self, state: state_types.TravelState) -> state_types.TravelState:
+        return self._property_agent.run(state)
 
-    def _flights_node(self, state: state_types.TravelState) -> state_types.TravelState:
-        return flights_agent.run(state, self._tools)
+    def _flight_node(self, state: state_types.TravelState) -> state_types.TravelState:
+        return self._flight_agent.run(state)
 
-    def _hotels_node(self, state: state_types.TravelState) -> state_types.TravelState:
-        return hotels_agent.run(state, self._tools)
+    def _analysis_node(self, state: state_types.TravelState) -> state_types.TravelState:
+        return self._analysis_agent.run(state)
 
-    def _itinerary_node(self, state: state_types.TravelState) -> state_types.TravelState:
-        return itinerary_agent.run(state, self._tools)
-
-    def _summary_node(self, state: state_types.TravelState) -> state_types.TravelState:
-        return summary_agent.run(state)
+    def _orchestrator_node(self, state: state_types.TravelState) -> state_types.TravelState:
+        return self._orchestrator_agent.run(state)

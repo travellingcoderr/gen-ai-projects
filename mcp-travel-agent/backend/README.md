@@ -8,7 +8,7 @@ Python FastAPI backend for `mcp-travel-agent`.
 - `app/api/schemas`: API schemas
 - `app/clients`: external API clients
 - `app/services`: business services
-- `app/services/travel`: travel multi-agent workflow (`agents`, `mcp_tools`, `state`)
+- `app/services/travel`: travel multi-agent workflow (`agents`, `tools`, `state`)
 - `app/services/llm`: provider abstraction (`base`, `factory`, `openai_provider`, `gemini_provider`)
 - `app/orchestration`: orchestration layer
 - `app/core`: config, errors, deps, protocols, logging
@@ -27,4 +27,4 @@ uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 - `LLM_MODEL`: optional override (auto-default per provider)
 - `OPENAI_API_KEY` and `GEMINI_API_KEY` available by default in settings
 - `GET /api/llm/config` returns the active provider/model configuration
-- `POST /api/travel/plan` runs the MCP-style multi-agent travel planner
+- `POST /api/travel/plan` runs the reference-style MCP travel planner (`parser -> property -> flight -> analysis -> orchestrator`)

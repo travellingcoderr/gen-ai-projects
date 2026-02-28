@@ -8,10 +8,10 @@ class TravelState(TypedDict):
     budget_usd: int
     travelers: int
     interests: list[str]
-    destination_options: list[dict[str, str]]
     selected_destination: str
-    flight_options: list[dict[str, str | int]]
-    hotel_options: list[dict[str, str | int]]
-    itinerary: list[dict[str, int | str]]
+    parsed_requirements: dict[str, object]
+    property_candidates: list[dict[str, object]]
+    top_properties: list[dict[str, object]]
+    flight_options: list[dict[str, object]]
     assumptions: list[str]
     summary: str

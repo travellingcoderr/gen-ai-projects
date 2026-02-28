@@ -20,10 +20,11 @@ def test_travel_plan_endpoint() -> None:
     assert response.status_code == 200
     payload = response.json()
     assert payload["selected_destination"]
-    assert len(payload["destination_options"]) >= 1
+    assert payload["parsed_requirements"]["destination"] == payload["selected_destination"]
     assert len(payload["flight_options"]) >= 1
-    assert len(payload["hotel_options"]) >= 1
-    assert len(payload["itinerary"]) == 4
+    assert len(payload["top_properties"]) >= 1
+    assert payload["top_properties"][0]["booking_link"]
+    assert "match_score" in payload["top_properties"][0]
     assert payload["summary"]
 
 
@@ -40,3 +41,4 @@ def test_travel_plan_defaults() -> None:
     payload = response.json()
     assert payload["selected_destination"]
     assert isinstance(payload["assumptions"], list)
+    assert payload["parsed_requirements"]["origin"] == "New York"

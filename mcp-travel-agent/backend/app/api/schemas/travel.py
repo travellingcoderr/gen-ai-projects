@@ -16,27 +16,38 @@ class DestinationOption(BaseModel):
 
 
 class FlightOption(BaseModel):
-    airline: str
+    carrier: str
     route: str
     estimated_price_usd: int
+    notes: str
 
 
-class HotelOption(BaseModel):
+class ParsedRequirements(BaseModel):
+    destination: str
+    origin: str
+    days: int
+    budget_usd: int
+    travelers: int
+    interests: list[str]
+    notes: str
+
+
+class PropertyOption(BaseModel):
     name: str
     area: str
-    estimated_price_per_night_usd: int
-
-
-class ItineraryDay(BaseModel):
-    day: int
-    plan: str
+    nightly_rate_usd: int
+    total_estimated_usd: int
+    rating: float
+    booking_link: str
+    match_score: float
+    pros: list[str]
+    cons: list[str]
 
 
 class TravelPlanResponse(BaseModel):
     summary: str
     selected_destination: str
-    destination_options: list[DestinationOption]
+    parsed_requirements: ParsedRequirements
+    top_properties: list[PropertyOption]
     flight_options: list[FlightOption]
-    hotel_options: list[HotelOption]
-    itinerary: list[ItineraryDay]
     assumptions: list[str]

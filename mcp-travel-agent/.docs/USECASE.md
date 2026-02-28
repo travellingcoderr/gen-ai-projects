@@ -1,158 +1,127 @@
 # MCP Travel Agent Use Case
 
-## What This Project Does (Simple Version)
-You type: "Plan my trip."
-The system breaks that big job into smaller jobs and gives each job to a specialist agent.
+## What This Project Does
+This project now mirrors the reference travel-agent structure more closely.
 
-Think of it like a travel company desk:
+You give the system one travel request in plain English, for example:
 
-- One person understands your request.
-- One person picks destinations.
-- One person checks flights.
-- One person checks hotels.
-- One person builds day-by-day plan.
-- One person writes the final summary.
+- "Search for top Airbnb-style stays in Coorg"
+- "I need WiFi, 2 bedrooms, and a moderate budget"
+- "I am flying from Delhi"
 
-That is the core multi-agent idea.
+The backend then breaks that request into specialist jobs.
 
----
+## Layman Explanation
+Think of this as a small travel operations team:
 
-## What is MCP?
+1. `parser_agent`
+   - Reads your messy travel request
+   - Pulls out destination, origin, budget, trip length, and interests
 
-**MCP (Model Context Protocol)** is an open standard introduced by Anthropic that defines how AI models (LLMs) communicate with external tools, data sources, and services in a structured, uniform way.
+2. `property_agent`
+   - Acts like the accommodation researcher
+   - Uses Airbnb-style tools to fetch stay options
 
-Think of it as a **universal plug** between an AI agent and the outside world.
+3. `flight_agent`
+   - Acts like the flight desk
+   - Uses flight tools to fetch travel options
 
-### The Problem MCP Solves
+4. `analysis_agent`
+   - Acts like the decision maker
+   - Scores the properties and writes pros/cons
 
-Before MCP, every team that wanted their AI to "call a tool" had to invent their own integration:
-- Custom function signatures
-- Custom JSON schemas
-- Custom error formats
-- Custom auth patterns
+5. `orchestrator_agent`
+   - Acts like the final travel consultant
+   - Combines everything into one clean answer
 
-This meant: **N tools × M models = N×M custom integrations**.
+That is the multi-agent pattern in simple terms.
 
-MCP standardises this to a single protocol. Every tool exposes the same interface. Every model speaks the same language. The equation becomes **N + M**.
-
-### MCP vs REST API — What's The Difference?
-
-| | REST API | MCP |
-|---|---|---|
-| **Designed for** | Human developers calling services from code | AI models discovering and calling tools at runtime |
-| **Discovery** | Manual — you read docs, write client code | Automatic — the model asks "what tools do you have?" and gets a machine-readable answer |
-| **Schema** | OpenAPI/Swagger (designed for human reading) | JSON Schema embedded in the protocol (designed for LLM consumption) |
-| **Caller** | A developer's application | An LLM agent deciding autonomously which tool to invoke |
-| **Invocation** | Hardcoded in application logic | Chosen dynamically by the model based on context |
-| **Statefulness** | Stateless by default | Supports stateful sessions (the model can maintain tool context across turns) |
-| **Error handling** | HTTP status codes (4xx/5xx) | Structured error types the model can reason about and retry |
-
-In short: **a REST API is built for code to call; MCP is built for an LLM to call**.
-
-### How MCP Works
-
-```
-User prompt
-    │
-    ▼
-LLM (e.g. Claude, GPT)
-    │  "I need flight data. I'll call the `search_flights` tool."
-    ▼
-MCP Client (inside your agent)
-    │  Sends a structured tool-call request
-    ▼
-MCP Server (your tool/service)
-    │  Executes the tool, returns structured result
-    ▼
-LLM receives result, continues reasoning
-    │
-    ▼
-Final response to user
+## Current Code Structure
+```text
+backend/app/services/travel/
+├── agents/
+│   ├── parser_agent.py
+│   ├── property_agent.py
+│   ├── flight_agent.py
+│   ├── analysis_agent.py
+│   └── orchestrator_agent.py
+├── tools/
+│   ├── mcp_connector.py
+│   ├── airbnb_tools.py
+│   └── flight_tools.py
+├── state.py
+└── travel_workflow_service.py
 ```
 
-An MCP server exposes three things the model can use:
-- **Tools** — callable functions (e.g. `search_flights`, `get_hotels`)
-- **Resources** — readable data (e.g. a file, a database record)
-- **Prompts** — reusable prompt templates the model can invoke
+## What Each Layer Does
+### Agents
+Agents contain the business thinking.
 
-### Why MCP Matters for Agentic Systems
+- They do not know how MCP is implemented.
+- They only know what tool they need.
 
-In a multi-agent system like this one, agents need to call external services to do real work. MCP gives you:
+### Tools
+Tools are the integration layer.
 
-1. **Composability** — swap one MCP server for another without changing agent code
-2. **Discoverability** — agents can list available tools at runtime, no hardcoding
-3. **Interoperability** — any MCP-compliant model works with any MCP-compliant server
-4. **Safety** — the protocol supports permission scoping, so agents only access what they are allowed to
+- `mcp_connector.py` is the future MCP boundary.
+- `airbnb_tools.py` is where Airbnb-like property search would happen.
+- `flight_tools.py` is where Expedia/flight search would happen.
 
----
+Right now they return mock data so the project runs without external dependencies.
 
-## Why MCP Here?
+### Workflow Service
+`travel_workflow_service.py` wires the agents together in this order:
 
-In this codebase, `MCPTravelTools` is the tool adapter layer. Right now it uses mock data so the project runs immediately. Later, you can replace those methods with real MCP server calls for:
+1. parser
+2. property
+3. flight
+4. analysis
+5. orchestrator
 
-- flight search
-- hotel search
-- destination activities/guide
+If `langgraph` is available, it runs as a graph.
+If not, it runs sequentially with the same order.
 
-## Workflow
-`POST /api/travel/plan` triggers this pipeline:
+## API
+Endpoint:
 
-1. `intake_agent` -> collects assumptions and validates context
-2. `destination_agent` -> suggests candidate destinations
-3. `flights_agent` -> fetches flight options via MCP tool adapter
-4. `hotels_agent` -> fetches hotel options via MCP tool adapter
-5. `itinerary_agent` -> creates day-wise plan
-6. `summary_agent` -> creates final readable answer
+- `POST /api/travel/plan`
 
-Orchestration is handled by `TravelWorkflowService`.
-
-- If `langgraph` is installed, it runs through a LangGraph state machine.
-- If not, it runs the same steps sequentially (fallback mode).
-
-## API Contract
 Request fields:
 
-- `query` (required)
-- `origin` (optional, default `New York`)
-- `days` (optional, default `4`)
-- `budget_usd` (optional, default `2000`)
-- `travelers` (optional, default `1`)
-- `interests` (optional)
+- `query`
+- `origin`
+- `days`
+- `budget_usd`
+- `travelers`
+- `interests`
 
 Response fields:
 
 - `summary`
 - `selected_destination`
-- `destination_options`
+- `parsed_requirements`
+- `top_properties`
 - `flight_options`
-- `hotel_options`
-- `itinerary`
 - `assumptions`
 
-## How To Read The Codebase Quickly
-Entry point:
+## How Real MCP Would Plug In Later
+When you are ready to connect to actual MCP servers:
 
-- `backend/app/api/routes/travel.py`
+1. Keep the agents the same.
+2. Replace mock logic inside `airbnb_tools.py` and `flight_tools.py`.
+3. Make those files call real MCP tools through `mcp_connector.py`.
+4. Keep returning normalized Python dictionaries so the rest of the system stays stable.
 
-Orchestration:
+That is the main design benefit of this refactor: the MCP-specific complexity is isolated in `tools/`, not spread across every agent.
 
-- `backend/app/orchestration/travel_orchestrator.py`
-- `backend/app/services/travel/travel_workflow_service.py`
+## Why This Refactor Helps
+Before, the travel module was generic.
+Now it reads like the reference project:
 
-Agent modules:
+- parser agent
+- property agent
+- flight agent
+- analysis agent
+- orchestrator agent
 
-- `backend/app/services/travel/agents/*.py`
-
-Tool adapters:
-
-- `backend/app/services/travel/mcp_tools.py`
-
-Schemas:
-
-- `backend/app/api/schemas/travel.py`
-
-## What To Do Next For Real MCP
-1. Replace `MCPTravelTools` mock methods with real MCP client calls.
-2. Add auth/config for MCP endpoints in `core/config.py`.
-3. Add error handling + retries per tool.
-4. Add integration tests with mocked MCP server responses.
+So it is easier to explain, easier to compare with the source reference, and easier to swap mocks with real MCP integrations later.
